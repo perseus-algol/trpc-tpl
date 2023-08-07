@@ -16,34 +16,34 @@ const users: User[] = [
   { id: "10", name: "User 10" },
 ];
 
+const userList = publicProcedure
+  .query(async () => {
+    // Retrieve users from a datasource, this is an imaginary database
+    return users;
+  });
+
+const userById = publicProcedure
+  .input(z.string())
+  .query(async (opts) => {
+    const { input } = opts;
+    // Retrieve the user with the given ID
+    const user: User | undefined = users.find(u => u.id === input);
+    return user;
+  });
+
+const userCreate = publicProcedure
+  .input(z.object({ name: z.string(), id: z.string() }))
+  .mutation(async (opts) => {
+    const { input } = opts;
+    // Create a new user in the database
+    users.push(input);
+    return input;
+  });
+
 export const appRouter = router({
-  userList: publicProcedure
-    .query(async () => {
-      // Retrieve users from a datasource, this is an imaginary database
-      return users;
-    }),
-
-  userById: publicProcedure
-    .input(z.string())
-    .query(async (opts) => {
-      const { input } = opts;
-      // Retrieve the user with the given ID
-      const user: User | undefined = users.find(u => u.id === input);
-      return user;
-    }),
-
-  userCreate: publicProcedure
-    .input(z.object({ name: z.string(), id: z.string() }))
-    .mutation(async (opts) => {
-      const { input } = opts;
-               
-
-      // Create a new user in the database
-      users.push(input);
-
-      return input;
-    }),
-
+  userList,
+  userById,
+  userCreate,
 });
- 
+
 export type AppRouter = typeof appRouter;
