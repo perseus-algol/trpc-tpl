@@ -1,10 +1,14 @@
-GET http://localhost:4000/trpc/getUser?input=%7B%22name%22%3A%20%22asdasd%22%7D
-
-###
-
-POST http://localhost:4000/trpc/createUser
+POST http://localhost:4000/trpc/userCreate
 
 {
   "name": "adsca",
-  "age": 23
+  "id": "11"
 }
+
+###
+
+GET http://localhost:4000/trpc/userList
+
+###
+
+GET http://localhost:4000/trpc/userById?input="11"

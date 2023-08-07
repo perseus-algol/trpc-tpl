@@ -1,20 +1,49 @@
-import { initTRPC } from '@trpc/server';
+ import { publicProcedure, router } from './trpc';
 import { z } from 'zod';
 
-export const t = initTRPC.create();
+type User = { id: string; name: string; };
 
-export const appRouter = t.router({
-  getUser: t.procedure.input(z.string()).query((opts) => {
-    opts.input; // string
-    return { id: opts.input, name: 'Bilbo' };
-  }),
-  createUser: t.procedure
-    .input(z.object({ name: z.string().min(5) }))
-    .mutation(async (opts) => {
-      // use your ORM of choice
-      return opts;
+const users: User[] = [
+  { id: "1", name: "User 1" },
+  { id: "2", name: "User 2" },
+  { id: "3", name: "User 3" },
+  { id: "4", name: "User 4" },
+  { id: "5", name: "User 5" },
+  { id: "6", name: "User 6" },
+  { id: "7", name: "User 7" },
+  { id: "8", name: "User 8" },
+  { id: "9", name: "User 9" },
+  { id: "10", name: "User 10" },
+];
+
+export const appRouter = router({
+  userList: publicProcedure
+    .query(async () => {
+      // Retrieve users from a datasource, this is an imaginary database
+      return users;
     }),
-});
 
-// export type definition of API
+  userById: publicProcedure
+    .input(z.string())
+    .query(async (opts) => {
+      const { input } = opts;
+      // Retrieve the user with the given ID
+      const user: User | undefined = users.find(u => u.id === input);
+      return user;
+    }),
+
+  userCreate: publicProcedure
+    .input(z.object({ name: z.string(), id: z.string() }))
+    .mutation(async (opts) => {
+      const { input } = opts;
+               
+
+      // Create a new user in the database
+      users.push(input);
+
+      return input;
+    }),
+
+});
+ 
 export type AppRouter = typeof appRouter;
