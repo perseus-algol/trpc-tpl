@@ -1,6 +1,6 @@
 import { PolicyId, Transaction, TxHash } from "lucid-cardano";
 import { claimParamsSchema, predictParamsSchema, questionInfoRequiredSchema, questionInfoSchema, questionState } from "./types";
-import { Context } from "./context";
+import { Context } from "./trpc/context";
 import z from 'zod';
 
 const idFn = <T>(id: T) => id;

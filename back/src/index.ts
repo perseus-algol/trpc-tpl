@@ -1,7 +1,7 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import express from 'express';
-import { appRouter } from './router';
-import { createContext } from './context';
+import { appRouter } from './trpc/router';
+import { createContext } from './trpc/context';
 import { createOpenApiExpressMiddleware } from 'trpc-openapi';
 import { generateOpenApiDocument } from 'trpc-openapi';
 import swaggerUi from 'swagger-ui-express';

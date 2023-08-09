@@ -1,5 +1,5 @@
 import { IApi, Opts, Question, Questions, Submit } from "./api-interface";
-import { Context } from "./context";
+import { Context } from "./trpc/context";
 
 const errrorResult = Promise.resolve({error: 'error'});
 
