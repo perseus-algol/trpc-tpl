@@ -1,0 +1,20 @@
+{
+  "name": "cli-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "ts-node --experimental-specifier-resolution=node --esm ./src/index.ts"
+  },
+  "dependencies": {
+    "@trpc/client": "^10.37.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.8",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
