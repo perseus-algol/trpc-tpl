@@ -1,8 +1,7 @@
-import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { appRouter } from './router';
-import { Context, createContext } from './context';
+import { createContext } from './context';
 import { createOpenApiExpressMiddleware } from 'trpc-openapi';
 import { generateOpenApiDocument } from 'trpc-openapi';
 import swaggerUi from 'swagger-ui-express';

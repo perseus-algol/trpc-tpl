@@ -18,6 +18,7 @@ export const mockApi: IApi = {
         return Promise.resolve({error: 'question.predict.create called'});
       },
       submit (opts: Opts<Submit.Input, Context>): Promise<Submit.Result> {
+        throw new Error('some error message here');
         return Promise.resolve({error: 'question.predict.submit called'});
       },
     },

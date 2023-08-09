@@ -49,6 +49,10 @@ const tests = [
 ];
 
 for (let test of tests) {
-  const result = await test;
-  console.log(result);
+  try {
+    const result = await test;
+    console.log(result);
+  } catch(err) {
+    console.log(err);
+  }
 }
