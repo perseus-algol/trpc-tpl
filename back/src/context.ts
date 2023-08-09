@@ -6,6 +6,6 @@ import { number } from 'zod';
 export const createContext = ({
   req,
   res,
-}: trpcExpress.CreateExpressContextOptions) => ({a: 1}); // no context
+}: trpcExpress.CreateExpressContextOptions) => ({}); // no context
 
 export type Context = inferAsyncReturnType<typeof createContext>;

@@ -1,5 +1,6 @@
 import type express from "express";
 import { Data, PolicyId } from "lucid-cardano";
+import z from 'zod';
 
 type Request<Body = unknown, PathParams = unknown, QueryParams = unknown> =
   express.Request<
@@ -11,46 +12,61 @@ type Request<Body = unknown, PathParams = unknown, QueryParams = unknown> =
 
 type Response<Body = unknown> = express.Response<Body>;
 
-type QuestionInfo = {
-  question: string
-  description: string
-  dueDate: number
-  prizeToken: {
-    policyID: PolicyId
-    tokenName: string
-    decimals: number
-  }
-  oracleToken: PolicyId
-  b: number
+const questionInfoSchema = z.object({
+  question: z.string(),
+  description: z.string(),
+  dueDate: z.number(),
+  prizeToken: z.object({
+    policyID: z.string().transform<PolicyId>(v => v),
+    tokenName: z.string(),
+    decimals: z.number(),
+  }),
+  oracleToken: z.string().transform<PolicyId>(v => v),
+  b: z.number(),
   /// XXX: NOT needed for creating a question, but NEEDED in question queries responses
-  outcomeToken?: PolicyId
-};
+  outcomeToken: z.string().transform<PolicyId>(v => v).optional(),
+})
 
-type QuestionState = {
-  mintedYes: bigint
-  mintedNo: bigint
-  currentRatio: bigint
-  status: "open" | "complete"
-  outcome: "Yes" | "No" | "Undefined"
-  utxo: {
-    txHash: string
-    index: number
-  }
-  pot: bigint
-};
+const questionInfoRequiredSchema = z.object({
+  ...questionInfoSchema.shape,
+  outcomeToken: questionInfoSchema.shape.outcomeToken.unwrap(),
+})
 
-type PredictParams = {
-  questionID: PolicyId
-  outcome: "Yes" | "No"
-  amount: number
-  walletAddress: string
-};
+type QuestionInfo = z.infer<typeof questionInfoSchema>;
 
-type ClaimParams = {
-  questionID: string
-  walletAddress: string
-  claimAmount: number
-};
+const questionState = (t: z.ZodType) => z.object({
+  mintedYes: t,
+  mintedNo: t,
+  currentRatio: t,
+  status: z.enum(["open", "complete"]),
+  outcome: z.enum(["Yes", "No", "Undefined"]),
+  utxo: z.object({
+    txHash: z.string(),
+    index: z.number()
+  }),
+  pot: t,
+});
+
+const questionStateSchema = questionState(z.bigint());
+
+type QuestionState = z.infer<typeof questionStateSchema>;
+
+const predictParamsSchema = z.object({
+  questionID: z.string().transform<PolicyId>(v => v),
+  outcome: z.enum(["Yes", "No"]),
+  amount: z.number(),
+  walletAddress: z.string()
+})
+
+type PredictParams = z.infer<typeof predictParamsSchema>;
+
+const claimParamsSchema = z.object({
+  questionID: z.string().transform<PolicyId>(v => v),
+  walletAddress: z.string(),
+  claimAmount: z.number(),
+});
+
+type ClaimParams = z.infer<typeof claimParamsSchema>;
 
 const QuestionDatum = Data.Object({
   tokenYESAmount: Data.Integer({ minimum: 0 }),
@@ -113,6 +129,12 @@ namespace QuestionRedeemer {
 }
 
 export {
+  questionInfoSchema,
+  questionInfoRequiredSchema,
+  questionState,
+  questionStateSchema,
+  predictParamsSchema,
+  claimParamsSchema,
   Request,
   Response,
   QuestionInfo,

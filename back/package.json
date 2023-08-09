@@ -2,14 +2,12 @@
   "name": "back",
   "version": "1.0.0",
   "description": "",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "dev": "ts-node-dev --respawn ./src/index.ts",
-    "start": "ts-node ./src/index.ts"
+    "dev": "ts-node --experimental-specifier-resolution=node --esm ./src/index.ts",
+    "test": "ts-node --experimental-specifier-resolution=node --esm ./tests/fetch-api.ts"
   },
   "dependencies": {
     "@trpc/server": "^10.37.1",

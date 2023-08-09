@@ -1,32 +1,39 @@
-POST http://localhost:4000/trpc/userCreate
+@url=http://localhost:4000
+@api={{url}}/api
+@trpc={{url}}/trpc
 
-{
-  "name": "adsca",
-  "id": "11"
-}
-
-###
-
-GET http://localhost:4000/trpc/userList
+GET {{api}}/questions
 
 ###
 
-GET http://localhost:4000/trpc/userById?input="11"
+GET {{api}}/question/10
 
 ###
 
-POST http://localhost:4000/api/users
+POST {{api}}/question/start/create
 Content-Type: application/json
 
-{
-  "name": "adsca",
-  "id": "11"
-}
+###
+
+POST {{api}}/question/start/submit
+Content-Type: application/json
 
 ###
 
-GET http://localhost:4000/api/users
+POST {{api}}/question/predict/create
+Content-Type: application/json
 
 ###
 
-GET http://localhost:4000/api/users/9
+POST {{api}}/question/predict/submit
+Content-Type: application/json
+
+###
+
+POST {{api}}/question/claim/create
+Content-Type: application/json
+
+###
+
+POST {{api}}/question/claim/submit
+Content-Type: application/json

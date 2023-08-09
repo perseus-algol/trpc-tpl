@@ -36,3 +36,9 @@ node_modules/.pnpm/trpc-openapi@1.2.0_@trpc+server@10.37.1_zod@3.21.4/node_modul
 ```
 
 Problem with `trpc-openapi` library and solution is to include `skipLibCheck": true` info `tsconfig.json`. https://stackoverflow.com/a/65136209/1189832
+
+### ts-node-dev: Error: Must use import to load ES Module
+
+Solution: https://github.com/wclr/ts-node-dev/issues/314
+
+Use this instead of ts-node-dev: `ts-node --experimental-specifier-resolution=node --esm ./src/index.ts`.

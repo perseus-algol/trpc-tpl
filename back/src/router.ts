@@ -1,57 +1,65 @@
-import type { inferProcedureInput, inferProcedureParams } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
-import { z } from 'zod';
 import { Context } from './context';
-import { User } from './entities/types';
-import schemas from './entities/schemas';
-import { users } from './mock-data';
 import { OpenApiMeta } from 'trpc-openapi';
-
-type Opts<Input, Context> = {
-  input: Input,
-  ctx: Context,
-}
+import { mockApi } from './mock-api';
+import { IApi, Question, Questions, Submit } from './api-interface';
 
 const t = initTRPC
   .meta<OpenApiMeta>()
   .context<Context>()
   .create();
 
-const userList = t.procedure
-  .meta({ openapi: { method: 'GET', path: '/users' } })
-  .input(z.undefined())
-  .output(z.array(schemas.user))
-  .query(async () => {
-    // Retrieve users from a datasource, this is an imaginary database
-    return users;
-  });
-
-const userById = t.procedure
-  .meta({ openapi: { method: 'GET', path: '/users/{id}' } })
-  .input(z.object({id: z.string()}))
-  .output(z.optional(schemas.user))
-  .query(async (opts) => {
-    const { input } = opts;
-    // Retrieve the user with the given ID
-    const user: User | undefined = users.find(u => u.id === input.id);
-    return user;
-  });
-
-const userCreate = t.procedure
-  .meta({ openapi: { method: 'POST', path: '/users' } })
-  .input(schemas.user)
-  .output(schemas.user)
-  .mutation(async (opts: Opts<User, Context>) => {
-    const { input, ctx } = opts;
-    // Create a new user in the database
-    users.push(input);
-    return input;
-  });
+const api: IApi = mockApi;
 
 export const appRouter = t.router({
-  userList,
-  userById,
-  userCreate,
+  question: t.router({
+    start: t.router({
+      create: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/start/create' } })
+        .input(Question.Start.input)
+        .output(Question.Start.result)
+        .mutation(api.question.start.create),
+      submit: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/start/submit' } })
+        .input(Submit.input)
+        .output(Submit.result)
+        .mutation(api.question.start.submit),
+    }),
+    predict: t.router({
+      create: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/predict/create' } })
+        .input(Question.Predict.input)
+        .output(Question.Predict.result)
+        .mutation(api.question.predict.create),
+      submit: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/predict/submit' } })
+        .input(Submit.input)
+        .output(Submit.result)
+        .mutation(api.question.predict.submit),
+    }),
+    claim: t.router({
+      create: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/claim/create' } })
+        .input(Question.Claim.input)
+        .output(Question.Claim.result)
+        .mutation(api.question.claim.create),
+      submit: t.procedure
+        .meta({ openapi: { method: 'POST', path: '/question/claim/submit' } })
+        .input(Submit.input)
+        .output(Submit.result)
+        .mutation(api.question.claim.submit),
+    }),
+    get: t.procedure
+      .meta({ openapi: { method: 'GET', path: '/question/{questionID}' } })
+      .input(Question.Get.input)
+      .output(Question.Get.result)
+      .query(api.question.getById),
+  }),
+  questions: t.procedure
+    .meta({ openapi: { method: 'GET', path: '/questions' } })
+    .input(Questions.input)
+    .output(Questions.result)
+    .query(api.questions),
 });
 
 export type AppRouter = typeof appRouter;
